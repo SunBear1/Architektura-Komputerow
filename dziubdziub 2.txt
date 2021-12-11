@@ -1,0 +1,34 @@
+.686
+.model flat
+public _replace_below_zero
+.code
+_replace_below_zero PROC
+push ebp ; zapisanie zawartości EBP na stosie
+mov ebp,esp ; kopiowanie zawartości ESP do EBP
+push ebx ; przechowanie zawartości rejestru EBX
+push edi
+
+mov ebx ,[ebp+8]
+mov ecx	,[ebp+12]
+mov edi ,[ebp+16]
+
+ptl:
+mov eax,[ebx]
+cmp eax,0
+jge dalej
+
+mov [ebx],edi
+dalej:
+
+add ebx,4
+loop ptl
+
+mov ebx ,[ebp+8]
+mov eax,ebx
+
+pop edi
+pop ebx ; odtworzenie zawartości rejestrów
+pop ebp
+ret ; powrót do programu głównego
+_replace_below_zero ENDP
+ END

@@ -1,0 +1,50 @@
+; program przykładowy (wersja 32-bitowa)
+.686
+.model flat
+
+public _srednia_harm
+.data
+suma_dol dd 0
+jedynka dd 1.0
+zero dd 0
+.code
+_srednia_harm PROC
+
+push ebp ; zapisanie zawartości EBP na stosie
+mov ebp,esp ; kopiowanie zawartości ESP do EBP
+push ebx ; przechowanie zawartości rejestru EBX
+finit
+mov eax,[ebp+8]
+mov ebx,[ebp+12]
+mov ecx,4
+fldz
+ptl:
+fld dword PTR [eax]
+fld dword PTR jedynka
+
+fdiv st(0),st(1)
+fstp st(1)
+fadd st(0),st(1)
+fstp st(1)
+add eax,4
+
+loop ptl
+fild dword PTR [ebp+12]
+fdiv st(0),st(1)
+
+
+pop ebx ; odtworzenie zawartości rejestrów
+pop ebp
+ret ; powrót do programu głównego
+_srednia_harm ENDP
+END
+
+float srednia_harm(float* tablica, unsigned int n);
+int main()
+{
+	float tab[4] = {2,2,2,2};
+	unsigned int n = 5;
+	float siema = srednia_harm(tab, n);
+
+	return 0;
+}

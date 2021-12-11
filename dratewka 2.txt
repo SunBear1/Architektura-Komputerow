@@ -1,0 +1,22 @@
+.code
+_odejmowanie PROC
+push ebp ; zapisanie zawartości EBP na stosie
+mov ebp,esp ; kopiowanie zawartości ESP do EBP
+push ebx ; przechowanie zawartości rejestru EBX
+push edi
+
+mov ebx,[ebp+8];odjemna
+mov edi,[ebx]
+mov eax,[edi]
+
+mov edi,[ebp+12];odjemnik
+mov ebx,[edi]
+
+sub	eax,ebx
+
+pop edi
+pop ebx ; odtworzenie zawartości rejestrów
+pop ebp
+ret ; powrót do programu głównego
+_odejmowanie ENDP
+ END

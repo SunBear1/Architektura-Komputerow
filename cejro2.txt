@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <xmmintrin.h>
+__m128 mul_at_once(__m128 one, __m128 two);
+int main()
+{
+	__m128 one;
+	one.m128_i32[0] = 1;
+	one.m128_i32[1] = 2;
+	one.m128_i32[2] = 3;
+	one.m128_i32[3] = 4;
+	__m128 two;
+	two.m128_i32[0] = 5;
+	two.m128_i32[1] = 6;
+	two.m128_i32[2] = 7;
+	two.m128_i32[3] = 8;
+	__m128 spoko = mul_at_once(one, two);
+	for (int j = 0; j < 4; j++)
+	{
+		printf("  %i\n", spoko.m128_i32[j]);
+	}
+	return 0;
+}
+
+.686
+.XMM
+.model flat
+
+public _mul_at_once
+.data
+.code
+_mul_at_once PROC
+
+push ebp ; zapisanie zawartości EBP na stosie
+mov ebp,esp ; kopiowanie zawartości ESP do EBP
+push ebx ; przechowanie zawartości rejestru EBX
+push esi
+
+ mov ebx,[ebp+8]
+ mov ecx,[ebp+12]
+ PMULLD	xmm0,xmm1
+
+pop esi
+pop ebx ; odtworzenie zawartości rejestrów
+pop ebp
+ret ; powrót do programu głównego
+_mul_at_once ENDP
+END

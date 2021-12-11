@@ -1,0 +1,62 @@
+; program przykładowy (wersja 32-bitowa)
+.686
+#include <stdio.h>
+#include <xmmintrin.h>
+float dziel(__m128* tablica1,unsigned int n, float dzielnik);
+int main()
+{
+	__m128 tablica[3] = { (__m128) { 1.0f,2.0f,3.0f,4.0f },
+	(__m128) { 5.0f,6.0f,7.0f,8.0f},
+	(__m128) { 9.0f,10.0f,11.0f,12.0f } };
+	dziel(tablica, 3, 2.0);
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			printf("%d,%d=%f\n", i, j, tablica[i].m128_f32[j]);
+		}
+	}
+	return 0;
+}.
+
+.686
+.XMM
+.model flat
+
+public _dziel
+.data
+dzielniki DD 4 dup (0.0)
+.code
+_dziel PROC
+
+push ebp ; zapisanie zawartości EBP na stosie
+mov ebp,esp ; kopiowanie zawartości ESP do EBP
+push ebx ; przechowanie zawartości rejestru EBX
+push esi
+
+ mov ebx,[ebp+8]
+ mov ecx,[ebp+12]
+ mov esi,[ebp+16]
+ push ecx
+ mov eax,OFFSET dzielniki
+ jakub2:
+ mov dzielniki[ecx*4],esi
+ loop jakub2
+ mov dzielniki[ecx],esi
+ pop ecx
+
+ mov edx,OFFSET dzielniki
+ movups xmm6, [edx]
+ jakub:
+ movups xmm5, [ebx]
+ DIVPS xmm5, xmm6
+ movups [ebx], xmm5
+ add ebx,16
+ loop jakub
+
+pop esi
+pop ebx ; odtworzenie zawartości rejestrów
+pop ebp
+ret ; powrót do programu głównego
+_dziel ENDP
+END

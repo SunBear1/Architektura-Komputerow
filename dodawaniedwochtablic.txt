@@ -1,0 +1,19 @@
+_piectrzy PROC
+push ebp
+ mov ebp, esp
+ push ebx
+ push esi
+
+ mov ebx,[ebp+8]
+ mov esi,[ebp+12]
+ movups xmm5, [ebx]
+ movups xmm6, [esi]
+ PADDSB xmm5, xmm6
+ movups [ebx], xmm5
+
+ pop esi
+ pop ebx
+ pop ebp
+ ret
+_piectrzy ENDP
+

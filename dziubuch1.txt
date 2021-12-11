@@ -1,0 +1,41 @@
+; program przykładowy (wersja 32-bitowa)
+.686
+.model flat
+
+public _oblicz_potege
+.data
+dwojka dd 2.0
+.code
+_oblicz_potege PROC
+
+push ebp ; zapisanie zawartości EBP na stosie
+mov ebp,esp ; kopiowanie zawartości ESP do EBP
+push ebx ; przechowanie zawartości rejestru EBX
+finit
+fild dword PTR [ebp+8]
+fld1
+FSCALE
+fild dword PTR [ebp+12]
+faddp	
+
+
+
+
+pop ebx ; odtworzenie zawartości rejestrów
+pop ebp
+ret ; powrót do programu głównego
+_oblicz_potege ENDP
+END
+
+#include <stdio.h>
+float oblicz_potege(unsigned char k,int m);
+int main()
+{
+	float siema=0;
+	for (int i = -7; i < 7; i++)
+	{
+		float siema = oblicz_potege(24, i);
+		printf("\ni = %d siema = %10.2f",i,siema);
+	}
+	return 0;
+}

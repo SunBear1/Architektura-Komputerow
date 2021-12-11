@@ -1,0 +1,59 @@
+#include <stdio.h>
+float nowy_exp(float x);
+int main()
+{
+	float x = 1;
+	float siema = nowy_exp(x);
+	printf("%f", siema);
+	return 0;
+}
+
+; program przykładowy (wersja 32-bitowa)
+.686
+.model flat
+
+public _nowy_exp
+.data
+mianownik dd 1.0
+iks dd 1.0
+.code
+_nowy_exp PROC
+
+push ebp ; zapisanie zawartości EBP na stosie
+mov ebp,esp ; kopiowanie zawartości ESP do EBP
+push ebx ; przechowanie zawartości rejestru EBX
+finit
+mov eax,1
+fld1 ;pierwsza jedynka
+
+ptl:
+push eax
+
+fld dword PTR iks
+fld dword PTR [ebp+8]
+fmulp
+fst dword PTR iks
+
+fld dword PTR mianownik 
+fild dword PTR [esp]
+
+fmulp ;licze silnie
+
+;fst dword PTR mianownik
+fst dword PTR mianownik
+fdivp
+
+faddp ; dodawnie ilorazu do sumy
+
+pop eax
+
+cmp eax,19
+inc eax
+jb ptl
+
+
+pop ebx ; odtworzenie zawartości rejestrów
+pop ebp
+ret ; powrót do programu głównego
+_nowy_exp ENDP
+END

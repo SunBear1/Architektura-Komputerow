@@ -1,0 +1,58 @@
+#include <stdio.h>
+float znajdz_wysokosc(unsigned int x, unsigned int alpha, unsigned int v_poziomie);
+int main()
+{
+	float jakub = znajdz_wysokosc(1, 45, 5);
+	printf("%f", jakub);
+	return 0;
+}
+
+
+.686
+.XMM
+.model flat
+
+public _znajdz_wysokosc
+.data
+stoosiemdziesiat dd 180
+g dd 9.8
+dwa dd 2
+.code
+_znajdz_wysokosc PROC
+
+push ebp ; zapisanie zawartości EBP na stosie
+mov ebp,esp ; kopiowanie zawartości ESP do EBP
+push ebx ; przechowanie zawartości rejestru EBX
+push esi
+
+fldpi
+fild dword PTR [ebp+12]
+fmulp
+fild dword PTR stoosiemdziesiat
+fdivp
+fptan
+fstp st(0)
+;^^ liczenie tangensa
+fild dword PTR [ebp+8]
+fmulp
+;^^ mnozenie go razy X
+fild dword PTR [ebp+8]
+fmul st(0),st(0)
+fld dword PTR g
+fmulp
+;^^ liczenie x^2 * g
+fild dword PTR [ebp+16]
+fmul st(0),st(0)
+fild dword PTR dwa
+fmulp
+;^^ liczenie 2*Vox^2
+fdivp
+fsubp
+;^^ podzielenie prawej czesci, a potem odjecie prawej od lewej
+
+pop esi
+pop ebx ; odtworzenie zawartości rejestrów
+pop ebp
+ret ; powrót do programu głównego
+_znajdz_wysokosc ENDP
+END

@@ -1,0 +1,171 @@
+#include <stdio.h>
+#include <xmmintrin.h>
+#include <stdint.h>
+
+
+float sprawdz_okresowosc(float* do_sprawdzenia);
+
+int main()
+{
+	float tab[30] = { 10.0, 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 11.0, 11.1,
+		11.2, 11.3, 11.4, 11.5, 11.6, 11.7, 11.8, 11.9, 12.0, 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.8,0 };
+	float x = sprawdz_okresowosc(tab);
+}
+
+.686
+.model flat
+extern _ExitProcess@4 : PROC
+extern _MessageBoxA@16 : PROC
+extern _MessageBoxW@16 : PROC
+extern    _GetSystemInfo@4 : PROC
+extern _malloc : PROC
+public _sprawdz_okresowosc
+.data
+dwa dd 2
+piec dd 5
+save dd 0
+zerodwa dd 0.2
+.code
+
+
+_sprawdz_okresowosc PROC
+push ebp
+mov ebp, esp
+push eax
+push ebx
+push ecx
+push edi
+push esi
+finit
+
+mov ecx,0
+mov ebx, [ebp + 8]
+licz_dalej: ;zliczanie liczby elementow w tablicy, aby przesłać go to funkcji avg
+mov eax,[ebx][ecx*4]
+inc ecx
+cmp eax,0
+jne licz_dalej
+dec ecx
+
+;liczba elementow w tablicy w ecx
+;obliczam sobie srednia czyli y z kreską
+push ecx
+push ebx
+call _avg
+add esp,8
+
+push dword ptr 4 ;wrzucam na stos 4, bo chce zarezerwować floata(rozmiar 4)
+call _malloc ;MAAAAAAAAAAAAALLOC
+add esp, 4 ;wyrównuje stos
+;pop ecx
+fstp dword ptr [eax]
+;push eax ;srednia w eax
+;push ecx
+;licze mianownik
+
+mov ecx,0
+mov ebx, [ebp + 8]
+fldz
+mianownik: ;zliczanie liczby elementow w tablicy
+mov edx,[ebx][ecx*4]
+fld dword ptr [ebx][ecx*4]
+fld dword ptr [eax]
+fsubp
+fmul st(0),st(0)
+faddp
+inc ecx
+cmp edx,0
+jne mianownik
+dec ecx
+;na czubku koprocesora znajduję się mianownik
+
+;liczę licznik
+mov ebx, [ebp + 8]
+mov edi,0
+mov esi,0
+mov esi,20 ;esi - wartosc k
+liczdalej:
+inc esi
+mov edi,esi ;edi - wartosc t
+inc edi
+
+cmp edi,ecx
+jg	porazka
+
+fldz
+licznik:
+fld dword ptr [ebx][edi*4]
+fld dword ptr [eax]
+fsubp
+mov edx,edi
+sub edx,esi
+fld dword ptr [ebx][edx*4]
+fld dword ptr [eax]
+fsubp
+fmulp
+faddp
+mov edx,[ebx][edi*4]
+inc edi
+cmp edx,0
+jne licznik
+fdiv st(0),st(1) ;wpisanie wyniku do eax
+fld dword ptr zerodwa
+fcomi st(0),st(1)
+jnc liczdalej
+jc	zwyciestwo
+porazka:
+fild dword ptr dwa
+fld1
+fsubp
+fstp dword ptr [eax]
+nop
+zwyciestwo:
+fld dword ptr zerodwa
+fstp dword ptr [eax]
+pop eax
+pop ebx
+pop ecx
+pop edi
+pop esi
+pop ebp
+ret
+_sprawdz_okresowosc ENDP
+
+
+
+
+
+_avg PROC
+push ebp
+mov ebp, esp
+push eax
+push ebx
+push ecx
+push edi
+push esi
+
+mov eax, [ebp + 8]
+mov ecx, [ebp + 12]
+mov esi,0
+
+fldz
+ptl:
+fld dword ptr [eax][esi*4]
+faddp
+inc esi
+loop ptl
+
+fild dword ptr [ebp + 12]
+fdivp
+
+nop
+pop eax
+pop ebx
+pop ecx
+pop edi
+pop esi
+pop ebp
+ret
+_avg ENDP
+
+END

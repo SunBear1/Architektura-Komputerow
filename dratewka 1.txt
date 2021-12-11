@@ -1,0 +1,36 @@
+.686
+.model flat
+public _szukaj_elem_max
+.code
+_szukaj_elem_max PROC
+push ebp ; zapisanie zawartości EBP na stosie
+mov ebp,esp ; kopiowanie zawartości ESP do EBP
+push ebx ; przechowanie zawartości rejestru EBX
+push edi
+
+mov edi,0
+mov ebx,[ebp+8]
+mov ecx,0
+mov ecx,[ebp+12]
+mov eax,0
+
+ptl: 
+cmp [ebx],eax
+jl	eax_mniejsze
+mov edi,ebx
+
+mov eax,[edi]
+
+eax_mniejsze:
+add ebx,4
+
+loop ptl
+
+mov eax,edi
+
+pop edi
+pop ebx ; odtworzenie zawartości rejestrów
+pop ebp
+ret ; powrót do programu głównego
+_szukaj_elem_max ENDP
+ END

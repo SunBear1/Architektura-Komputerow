@@ -1,0 +1,39 @@
+.686
+.model flat
+public _mul
+.data
+
+.code
+_mul PROC
+push ebp ; zapisanie zawartości EBP na stosie
+mov ebp,esp ; kopiowanie zawartości ESP do EBP
+push ebx ; przechowanie zawartości rejestru EBX
+
+mov eax,[ebp+8]
+mov ebx,[ebp+12]
+mov ecx,[ebp+16]
+mov eax,[eax]
+mov ebx,[ebx]
+
+mov edx,0
+mul ebx
+mov [ecx+4],edx
+mov [ecx],eax
+
+pop ebx ; odtworzenie zawartości rejestrów
+pop ebp
+ret ; powrót do programu głównego
+_mul ENDP
+ END
+
+#include <stdio.h>
+void mul(int* val1, int* val2,__int64* wynik);
+int main()
+{
+	int val1=0,val2=0;
+	_int64 wynik=0;
+	scanf_s("%d %d", &val1, &val2, 32);
+	mul(&val1,&val2,&wynik);
+	printf("%d\n",wynik);
+	return 0;
+}
