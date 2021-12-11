@@ -1,0 +1,5 @@
+﻿  Assembling main.asm...
+Source.obj : error LNK2019: unresolved external symbol "union __m128 __cdecl mul_at_once(union __m128,union __m128)" (?mul_at_once@@YA?AT__m128@@T1@0@Z) referenced in function _main
+    Hint on symbols that are defined and could potentially match:
+      _mul_at_once
+C:\Users\lukin\OneDrive\INF\AKOULAMKI\Debug\AKOULAMKI.exe : fatal error LNK1120: 1 unresolved externals
